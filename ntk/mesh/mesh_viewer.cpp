@@ -666,6 +666,8 @@ void MeshViewer :: paintGL()
 
     unsigned long end = ntk::Time::getMillisecondCounter();
     // ntk_dbg_print((end-start) / 1000., 1);
+
+    swapBuffers();
 }
 
 void MeshViewer::drawGrid()

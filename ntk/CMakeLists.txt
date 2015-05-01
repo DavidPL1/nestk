@@ -198,11 +198,11 @@ SET ( ntk_sources
      utils/xml_serializable.cpp
 )
 
-QT4_WRAP_UI(uic_sources
+QT5_WRAP_UI(uic_sources
   gui/image_window.ui
 )
 
-QT4_WRAP_CPP(moc_sources
+QT5_WRAP_CPP(moc_sources
   gui/image_widget.h
   gui/image_window.h
   hub/hub-impl.h
@@ -405,7 +405,11 @@ find_package(Boost REQUIRED)
 
 TARGET_LINK_LIBRARIES(nestk
   ${Boost_LIBRARIES}
-  ${QT_LIBRARIES}
+  ${Qt5Core_LIBRARIES}
+  ${Qt5Gui_LIBRARIES}
+  ${Qt5Widgets_LIBRARIES}
+  ${Qt5OpenGL_LIBRARIES}
+  ${Qt5Network_LIBRARIES}
   ${GSL_LIBRARIES}
   ${G2O_LIBRARIES}
   ${OPENCL_LIBRARIES}

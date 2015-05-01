@@ -17,7 +17,7 @@ FOREACH(file ${ARGN})
 ENDFOREACH(file ${filelist})
 ENDMACRO(NESTK_INSTALL_NOBASE_HEADER_FILES)
 
-MACRO(QT4_WRAP_CPP_INLINE targetname )
+MACRO(QT5_WRAP_CPP_INLINE targetname )
 # get include dirs
 GET_DIRECTORY_PROPERTY(moc_includes_tmp INCLUDE_DIRECTORIES)
 SET(moc_includes)
@@ -35,7 +35,7 @@ FOREACH(it ${ARGN})
                     ${QT_MOC_EXECUTABLE} ${moc_includes} -i -o ${outfile} ${it}
                    )
 ENDFOREACH(it)
-ENDMACRO(QT4_WRAP_CPP_INLINE)
+ENDMACRO(QT5_WRAP_CPP_INLINE)
 
 SET(DIRS ${QT_LIBRARY_DIRS} ${CMAKE_BINARY_DIR}/lib ${CMAKE_BINARY_DIR}/bin)
 

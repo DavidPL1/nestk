@@ -171,7 +171,7 @@ void compute_sift_points(std::list<LocatedFeature*>& output, const char* image_f
         QFile(image_fname + ".key").remove();
         ntk_throw_exception("Could not execute sift program.");
     }
-    load_lowe_keyfile(output, (image_fname + ".key").toAscii());
+    load_lowe_keyfile(output, (image_fname + ".key").toLatin1());
 #endif
 }
 
