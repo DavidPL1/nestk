@@ -46,6 +46,8 @@ public:
 public:
   /*! Return an identifier of the camera type. */
   virtual std::string grabberType () const { return m_grabber_type; }
+  int currentImageIndex() const { return m_current_image_index; }
+  int imageListSize() const { return m_image_list.size(); }
 
 protected:
   virtual void run();
