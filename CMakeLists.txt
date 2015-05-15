@@ -35,11 +35,13 @@ endif("${CMAKE_BUILD_TYPE}" STREQUAL "")
 ### options
 ################################################################################
 
+OPTION(NESTK_BUILD_STATIC "Build Nestk static." 0)
+
 OPTION(NESTK_USE_GSL "Build GSL support." ${NESTK_USE_GSL})
 OPTION(NESTK_USE_FREENECT "Build libfreenect support." ${NESTK_USE_FREENECT})
 OPTION(NESTK_USE_OPENNI "Build OpenNI support." ${NESTK_USE_OPENNI})
 OPTION(NESTK_USE_OPENNI2 "Build OpenNI2 support." ${NESTK_USE_OPENNI2})
-OPTION(NESTK_USE_NITE "Build Nite support." ${NESTK_USE_OPENNI})
+OPTION(NESTK_USE_NITE "Build Nite support." 0)
 OPTION(NESTK_USE_PCL "Build PCL support." ${NESTK_USE_PCL})
 OPTION(NESTK_USE_PMDSDK "Build PMD/SDK supoprt." ${NESTK_USE_PMDSDK})
 OPTION(NESTK_USE_SOFTKINETIC "Build Softkinetic supoprt." ${NESTK_USE_SOFTKINETIC})
@@ -48,8 +50,8 @@ OPTION(NESTK_USE_ROS "Use inside ROS." ${NESTK_USE_ROS})
 SET(NESTK_USE_EMBEDDED_FREENECT 0 CACHE INTERNAL "Use embedded libfreenect.")
 SET(NESTK_USE_EMBEDDED_PMDSDK 0 CACHE INTERNAL "Use embedded pmdsdk.")
 
-OPTION(NESTK_USE_EMBEDDED_EIGEN "Use embedded eigen" ${NESTK_USE_EMBEDDED_EIGEN})
-OPTION(NESTK_USE_EMBEDDED_GLEW "Use embedded glew." 1)
+OPTION(NESTK_USE_EMBEDDED_EIGEN "Use embedded eigen" 0)
+OPTION(NESTK_USE_EMBEDDED_GLEW "Use embedded glew." 0)
 
 OPTION(NESTK_BUILD_OBJECT_DETECTION "Build Anytime Detection System" ${NESTK_BUILD_OBJECT_DETECTION})
 
