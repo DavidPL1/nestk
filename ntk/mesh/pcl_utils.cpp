@@ -87,6 +87,40 @@ void polygonMeshToMesh(ntk::Mesh& mesh, const pcl::PolygonMesh& polygon)
     }
 }
 
+void polygonMeshToMeshWithNormals(ntk::Mesh& mesh, const pcl::PolygonMesh& polygon)
+{
+    pcl::PointCloud<pcl::PointNormal> cloud;
+    pcl::fromROSMsg(polygon.cloud, cloud);
+    pointCloudToMesh(mesh, cloud);
+    mesh.faces.resize(polygon.polygons.size());
+    foreach_idx(i, polygon.polygons)
+    {
+        const pcl::Vertices& vertices = polygon.polygons[i];
+        ntk_assert(vertices.vertices.size() == 3, "Must be triangles!");
+        ntk::Face& face = mesh.faces[i];
+        face.indices[0] = vertices.vertices[0];
+        face.indices[1] = vertices.vertices[1];
+        face.indices[2] = vertices.vertices[2];
+    }
+}
+
+void polygonMeshToMeshWithNormalsAndColors(ntk::Mesh& mesh, const pcl::PolygonMesh& polygon)
+{
+    pcl::PointCloud<pcl::PointXYZRGBNormal> cloud;
+    pcl::fromROSMsg(polygon.cloud, cloud);
+    pointCloudToMesh(mesh, cloud);
+    mesh.faces.resize(polygon.polygons.size());
+    foreach_idx(i, polygon.polygons)
+    {
+        const pcl::Vertices& vertices = polygon.polygons[i];
+        ntk_assert(vertices.vertices.size() == 3, "Must be triangles!");
+        ntk::Face& face = mesh.faces[i];
+        face.indices[0] = vertices.vertices[0];
+        face.indices[1] = vertices.vertices[1];
+        face.indices[2] = vertices.vertices[2];
+    }
+}
+
 void meshToPolygonMesh(pcl::PolygonMesh& polygon, const ntk::Mesh& mesh)
 {
     pcl::PointCloud<pcl::PointXYZ> cloud;
@@ -213,6 +247,18 @@ void meshToPointCloud(pcl::PointCloud<pcl::PointXYZRGB>& cloud,
     foreach_idx(i, cloud.points)
     {
         cloud.points[i] = toPcl(mesh.vertices[i], mesh.colors[i]);
+    }
+}
+
+void meshToPointCloud(pcl::PointCloud<pcl::PointXYZRGBNormal>& cloud,
+                      const ntk::Mesh& mesh)
+{
+    cloud.points.resize(mesh.vertices.size());
+    cloud.height = 1;
+    cloud.width = cloud.points.size();
+    foreach_idx(i, cloud.points)
+    {
+        cloud.points[i] = toPcl(mesh.vertices[i], mesh.normals[i], mesh.colors[i]);
     }
 }
 

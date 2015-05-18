@@ -188,6 +188,36 @@ void pointCloudToMesh(ntk::Mesh& mesh,
     }
 }
 
+template <>
+void pointCloudToMesh(ntk::Mesh& mesh,
+                      const pcl::PointCloud<pcl::PointXYZRGB>& cloud)
+{
+    mesh.clear();
+    mesh.vertices.resize(cloud.size());
+    mesh.colors.resize(cloud.size());
+    foreach_idx(i, cloud.points)
+    {
+        mesh.vertices[i] = cv::Point3f(cloud.points[i].x, cloud.points[i].y, cloud.points[i].z);
+        mesh.colors[i] = cv::Vec3b(cloud.points[i].r, cloud.points[i].g, cloud.points[i].b);
+    }
+}
+
+template <>
+void pointCloudToMesh(ntk::Mesh& mesh,
+                      const pcl::PointCloud<pcl::PointXYZRGBNormal>& cloud)
+{
+    mesh.clear();
+    mesh.vertices.resize(cloud.size());
+    mesh.normals.resize(cloud.size());
+    mesh.colors.resize(cloud.size());
+    foreach_idx(i, cloud.points)
+    {
+        mesh.vertices[i] = cv::Point3f(cloud.points[i].x, cloud.points[i].y, cloud.points[i].z);
+        mesh.normals[i] = cv::Point3f(cloud.points[i].normal_x, cloud.points[i].normal_y, cloud.points[i].normal_z);
+        mesh.colors[i] = cv::Vec3b(cloud.points[i].r, cloud.points[i].g, cloud.points[i].b);
+    }
+}
+
 template <class PointT>
 void sampledRgbdImageToPointCloud(pcl::PointCloud<PointT>& cloud,
                                   const RGBDImage& image,
