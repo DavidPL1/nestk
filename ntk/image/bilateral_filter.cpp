@@ -124,15 +124,15 @@ depth_bilateralFilter( const Mat1f& src_, Mat1f& dst_,
     copyMakeBorder( src, temp, radius, radius, radius, radius, borderType );
 
     // allocate lookup tables
-    vector<float> _space_weight(d*d);
-    vector<int> _space_ofs(d*d);
+    std::vector<float> _space_weight(d*d);
+    std::vector<int> _space_ofs(d*d);
     float* space_weight = &_space_weight[0];
     int* space_ofs = &_space_ofs[0];
 
     // assign a length which is slightly more than needed
     len = (float)(maxValSrc - minValSrc) * cn;
     kExpNumBins = kExpNumBinsPerChannel * cn;
-    vector<float> _expLUT(kExpNumBins+2);
+    std::vector<float> _expLUT(kExpNumBins+2);
     float* expLUT = &_expLUT[0];
 
     scale_index = kExpNumBins/len;

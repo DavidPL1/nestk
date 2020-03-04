@@ -510,8 +510,8 @@ void calibrateStereoFromCheckerboard(const std::vector< std::vector<Point2f> >& 
                     intrinsics, zero_dist, intrinsics, zero_dist,
                     image_size,
                     R, T, E, F,
-                    TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, 50, 1e-6),
-                    CALIB_FIX_INTRINSIC|CALIB_SAME_FOCAL_LENGTH);
+                    CALIB_FIX_INTRINSIC|CALIB_SAME_FOCAL_LENGTH,
+                    TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, 50, 1e-6));
 
     // OpenCV coords has y down and z toward scene.
     // OpenGL classical 3d coords has y up and z backwards

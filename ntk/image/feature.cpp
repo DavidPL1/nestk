@@ -29,15 +29,8 @@
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/flann/flann.hpp>
 
-#ifdef HAVE_OPENCV_GREATER_THAN_2_4_0
-#include <opencv2/nonfree/nonfree.hpp>
-#endif
-
 #include <cassert>
-
-#ifdef HAVE_OPENCV_GREATER_THAN_2_4_0
 #include <opencv2/nonfree/nonfree.hpp>
-#endif
 
 using namespace cv;
 
@@ -46,11 +39,7 @@ namespace ntk
 
 struct FeatureSet :: Impl
 {
-#ifdef HAVE_OPENCV_GREATER_THAN_2_3_0
     typedef cv::flann::GenericIndex<cv::flann::L2<float> > IndexType;
-#else
-    typedef cv::flann::Index_<float> IndexType;
-#endif
     ntk::Ptr< IndexType > descriptor_index;
 };
 
@@ -101,12 +90,7 @@ void FeatureSet :: extractFromImage(const RGBDImage& image,
     }
     else if (params.detector_type == "SIFT" || params.detector_type == "GPUSIFT")
     {
-#ifdef HAVE_OPENCV_GREATER_THAN_2_4_0
         detector = new SiftFeatureDetector();
-#else
-        detector = new SiftFeatureDetector(SIFT::DetectorParams::GET_DEFAULT_THRESHOLD(),
-                                           SIFT::DetectorParams::GET_DEFAULT_EDGE_THRESHOLD());
-#endif
     }
     else if (params.detector_type == "SURF")
     {
@@ -115,11 +99,6 @@ void FeatureSet :: extractFromImage(const RGBDImage& image,
     }
     else if (params.detector_type == "SURF_BIGSCALE")
     {
-#ifdef HAVE_OPENCV_GREATER_THAN_2_4_0
-#else
-        detector = new SurfFeatureDetector(params.threshold > 0 ? params.threshold : 400 /*hessian_threshold*/,
-                                           2/*octaves*/, 3/*octave_layers*/);
-#endif
     }
     else
     {
@@ -149,32 +128,18 @@ void FeatureSet :: extractFromImage(const RGBDImage& image,
     else if (params.descriptor_type == "SURF64")
     {
         m_feature_type = Feature_SURF64;
-#ifdef HAVE_OPENCV_GREATER_THAN_2_4_0
         extractor = new cv::SurfDescriptorExtractor(400,
                                                     4 /* octaves */,
                                                     2 /* octave layers */,
                                                     false /* extended */);
-#else
-        extractor = new cv::SurfDescriptorExtractor(400,
-                                                    4 /* octaves */,
-                                                    2 /* octave layers */,
-                                                    false /* extended */);
-#endif
     }
     else if (params.descriptor_type == "SURF128")
     {
         m_feature_type = Feature_SURF128;
-#ifdef HAVE_OPENCV_GREATER_THAN_2_4_0
         extractor = new cv::SurfDescriptorExtractor(400,
                                                     4 /* octaves */,
                                                     2 /* octave layers */,
                                                     true /* extended */);
-#else
-        extractor = new cv::SurfDescriptorExtractor(400,
-                                                    4 /* octaves */,
-                                                    2 /* octave layers */,
-                                                    true /* extended */);
-#endif
     }
     else
     {
@@ -432,11 +397,7 @@ void FeatureSet :: buildDescriptorIndex()
 {
     if (m_locations.size() < 1)
         return;
-#ifdef HAVE_OPENCV_GREATER_THAN_2_3_0
     cvflann::KDTreeIndexParams params(4);
-#else
-    cv::flann::KDTreeIndexParams params(4);
-#endif
     impl->descriptor_index = new Impl::IndexType(m_descriptors, params);
 }
 
@@ -463,11 +424,7 @@ void FeatureSet :: matchWith(const FeatureSet& rhs,
         std::copy(rhs_descriptors.ptr<float>(i),
                   rhs_descriptors.ptr<float>(i) + rhs_descriptors.cols,
                   query.begin());
-#ifdef HAVE_OPENCV_GREATER_THAN_2_3_0
         cvflann::SearchParams params(64);
-#else
-        cv::flann::SearchParams params(64);
-#endif
         assert(!impl->descriptor_index.empty());
         impl->descriptor_index->knnSearch(query, indices, dists, 2, params);
         if (indices[0] < 0 || indices[1] < 0)
