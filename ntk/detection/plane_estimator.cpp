@@ -23,7 +23,8 @@
 # include <ntk/geometry/pose_3d.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include <opencv2/contrib/contrib.hpp>
+#include <opencv2/calib3d.hpp>                  \
+  //#include <opencv2/contrib/contrib.hpp>
 
 #ifdef NESTK_USE_PCL
 # include <ntk/mesh/pcl_utils.h>

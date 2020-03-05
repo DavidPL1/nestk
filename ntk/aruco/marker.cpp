@@ -130,23 +130,23 @@ void Marker::calculateExtrinsics(float markerSizeMeters,
     if ( camMatrix.rows==0 || camMatrix.cols==0) throw cv::Exception(9004,"CameraMatrix is empty","calculateExtrinsics",__FILE__,__LINE__);
 
     double halfSize=markerSizeMeters/2.;
-    CvMat* objPoints=cvCreateMat(4,3,CV_32FC1);
-    cvSet2D(objPoints,0,0,cvScalar(model_center.x-halfSize));
-    cvSet2D(objPoints,0,1,cvScalar(model_center.y+halfSize));
-    cvSet2D(objPoints,0,2,cvScalar(model_center.z));
-    cvSet2D(objPoints,1,0,cvScalar(model_center.x-halfSize));
-    cvSet2D(objPoints,1,1,cvScalar(model_center.y-halfSize));
-    cvSet2D(objPoints,1,2,cvScalar(model_center.z));
-    cvSet2D(objPoints,2,0,cvScalar(model_center.x+halfSize));
-    cvSet2D(objPoints,2,1,cvScalar(model_center.y-halfSize));
-    cvSet2D(objPoints,2,2,cvScalar(model_center.z));
-    cvSet2D(objPoints,3,0,cvScalar(model_center.x+halfSize));
-    cvSet2D(objPoints,3,1,cvScalar(model_center.y+halfSize));
-    cvSet2D(objPoints,3,2,cvScalar(model_center.z));
+    cv::Mat objPoints = cv::Mat(4,3,CV_32FC1);
+    objPoints.at<float>(0,0) = model_center.x-halfSize;
+    objPoints.at<float>(0,1) = model_center.y+halfSize;
+    objPoints.at<float>(0,2) = model_center.z;
+    objPoints.at<float>(1,0) = model_center.x-halfSize;
+    objPoints.at<float>(1,1) = model_center.y-halfSize;
+    objPoints.at<float>(1,2) = model_center.z;
+    objPoints.at<float>(2,0) = model_center.x+halfSize;
+    objPoints.at<float>(2,1) = model_center.y-halfSize;
+    objPoints.at<float>(2,2) = model_center.z;
+    objPoints.at<float>(3,0) = model_center.x+halfSize;
+    objPoints.at<float>(3,1) = model_center.y+halfSize;
+    objPoints.at<float>(3,2) = model_center.z;
 
-    CvMat *imagePoints=cvCreateMat(4,2,CV_32FC1);
-    CvMat cvCamMatrix=camMatrix;
-    CvMat cvDistCoeffs;
+    cv::Mat imagePoints = cv::Mat(4,2,CV_32FC1);
+    cv::Mat cvCamMatrix = camMatrix;
+    cv::Mat cvDistCoeffs;
     Mat zeros=Mat::zeros(4,1,CV_32FC1);
     if (distCoeff.rows>=4)  cvDistCoeffs=distCoeff;
     else  cvDistCoeffs=zeros;
@@ -154,18 +154,18 @@ void Marker::calculateExtrinsics(float markerSizeMeters,
     //Set image points from the marker
     for (int c=0;c<4;c++)
     {
-        cvSet2D( imagePoints,c,0,cvScalar((*this)[c%4].x));
-        cvSet2D( imagePoints,c,1,cvScalar((*this)[c%4].y));
+        imagePoints.at<float>(c,0) = (*this)[c%4].x;
+        imagePoints.at<float>(c,1) = (*this)[c%4].y;
     }
-    CvMat cvRvec=Rvec;
-    CvMat cvTvec=Tvec;
-    cvFindExtrinsicCameraParams2(objPoints, imagePoints, &cvCamMatrix, &cvDistCoeffs,&cvRvec,&cvTvec);
+    cv::Mat cvRvec=Rvec;
+    cv::Mat cvTvec=Tvec;
+    cv::solvePnP(objPoints, imagePoints, cvCamMatrix, cvDistCoeffs, cvRvec, cvTvec);
     //rotate the X axis so that Y is perpendicular to the marker plane
     // rotateXAxis(Rvec);
     ssize=markerSizeMeters;
 
-    cvReleaseMat(&objPoints);
-    cvReleaseMat(&imagePoints);
+    objPoints.release();
+    imagePoints.release();
 }
 
 /**
@@ -220,11 +220,11 @@ static void aruco_to_nestk(const Mat1f& tvec,
     to_open_cv(2,2) = -1;
     cv::Mat1f from_open_cv = to_open_cv.inv();
 
-    CvMat c_rvec = rvec;
-    CvMat c_tvec = tvec;
+    cv::Mat c_rvec = rvec;
+    cv::Mat c_tvec = tvec;
 
-    cv::Mat1f rot(3,3); CvMat c_rot = rot;
-    cvRodrigues2(&c_rvec, &c_rot);
+    cv::Mat1f rot(3,3); cv::Mat c_rot = rot;
+    Rodrigues(rvec, c_rot);
 
     H = cv::Mat1f(4,4);
     setIdentity(H);

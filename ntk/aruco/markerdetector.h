@@ -201,7 +201,7 @@ private:
     /**
      */
     template<typename T>
-    void printMat(CvMat   *M,std::string info="")
+    void printMat(cv::Mat   *M,std::string info="")
     {
         std::cout<<info<<std::endl;
         cv::Mat MM(M);

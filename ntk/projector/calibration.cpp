@@ -45,7 +45,7 @@ void ProjectorCalibration :: loadFromFile(const char* filename)
 {
     QFileInfo f (filename);
     ntk_throw_exception_if(!f.exists(), "Could not find calibration file.");
-    cv::FileStorage calibration_file (filename, CV_STORAGE_READ);
+    cv::FileStorage calibration_file (filename, cv::FileStorage::READ);
     readMatrix(calibration_file, "proj_intrinsics", intrinsics);
     readMatrix(calibration_file, "proj_distortion", distortion);
     readMatrix(calibration_file, "R", R);

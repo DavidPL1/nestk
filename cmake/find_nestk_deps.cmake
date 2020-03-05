@@ -24,7 +24,7 @@ IF (NESTK_USE_GSL)
 ENDIF()
 
 ## OpenCV
-FIND_PACKAGE(OpenCV 4 REQUIRED xfeatures2d)
+FIND_PACKAGE(OpenCV 4 REQUIRED xfeatures2d videoio core imgproc highgui photo)
 
 ## Eigen
 IF (NOT NESTK_USE_EMBEDDED_EIGEN)

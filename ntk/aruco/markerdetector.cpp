@@ -581,7 +581,7 @@ int MarkerDetector::getMarkerId(Mat &in,int &nRotations)
 
 bool MarkerDetector::isInto(vector<Point2f> &a,vector<Point2f> &b)
 {//NOT TESTED
-          CvMat  contour(b.size(),1,CV_32FC2);
+          cv::Mat  contour(b.size(),1,CV_32FC2);
           float *ptr=contour.ptr<float>(0);
           for(unsigned int i=0;i<a.size();i++){
             *(ptr++)=b[i].x;
@@ -819,29 +819,5 @@ double MarkerDetector::dot( double a1, double a2, double a3,
 {
     return( a1 * b1 + a2 * b2 + a3 * b3 );
 }
-
-/*
- void MarkerDetector::getExtrinsicsParams(double m_modelview[16], guimage::ExtrinsicParams  &OutExt)
- {
-  CvMat* inMatrix=cvCreateMat(3,3,CV_32FC1);
-  CvMat* vectorRotation=cvCreateMat(1,3,CV_32FC1);
-
-  cvSet2D( inMatrix , 0,0, cvScalar(m_modelview[0 + 0*4] ) );
-  cvSet2D( inMatrix , 0,1, cvScalar(m_modelview[0 + 1*4] ) );
-  cvSet2D( inMatrix , 0,2, cvScalar(m_modelview[0 + 2*4] ) );
-  cvSet2D( inMatrix , 1,0, cvScalar(m_modelview[1 + 0*4] ) );
-  cvSet2D( inMatrix , 1,1, cvScalar(m_modelview[1 + 1*4] ) );
-  cvSet2D( inMatrix , 1,2, cvScalar(m_modelview[1 + 2*4] ) );
-  cvSet2D( inMatrix , 2,0, cvScalar(-m_modelview[2 + 0*4] ) );
-  cvSet2D( inMatrix , 2,1, cvScalar(-m_modelview[2 + 1*4] ) );
-  cvSet2D( inMatrix , 2,2, cvScalar(-m_modelview[2 + 2*4] ) );
-
-  cvRodrigues2(inMatrix,vectorRotation) ;
-  OutExt.setParams(m_modelview[0 + 3*4],m_modelview[1 + 3*4],-m_modelview[2 + 3*4],cvGet2D(vectorRotation,0,0).val[0],cvGet2D(vectorRotation,0,1).val[0],cvGet2D(vectorRotation,0,2).val[0]);
-
-  cvReleaseMat(&inMatrix);
-  cvReleaseMat(&vectorRotation);
-
- }*/
 
 } // aruco

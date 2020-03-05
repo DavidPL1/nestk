@@ -131,7 +131,7 @@ void RGBDCalibration :: loadFromFile(const char* filename)
 {
     QFileInfo f (filename);
     ntk_throw_exception_if(!f.exists(), "Could not find calibration file.");
-    cv::FileStorage calibration_file (filename, CV_STORAGE_READ);
+    cv::FileStorage calibration_file (filename, cv::FileStorage::READ);
     readMatrix(calibration_file, "rgb_intrinsics", rgb_intrinsics);
     readMatrix(calibration_file, "rgb_distortion", rgb_distortion);
     zero_rgb_distortion = rgb_distortion(0,0) < 1e-5 ? true : false;
@@ -255,7 +255,7 @@ void RGBDCalibration :: updateDistortionMaps()
 void RGBDCalibration :: saveToFile(const char* filename) const
 {
     FileStorage output_file (filename,
-                             CV_STORAGE_WRITE);
+                             cv::FileStorage::WRITE);
     writeMatrix(output_file, "rgb_intrinsics", rgb_intrinsics);
     writeMatrix(output_file, "rgb_distortion", rgb_distortion);
     writeMatrix(output_file, "depth_intrinsics", depth_intrinsics);

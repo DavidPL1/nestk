@@ -710,9 +710,9 @@ void Pose3D :: setCameraTransform(const cv::Mat1d& tvec, const cv::Mat1d& rvec)
     to_open_cv(2,2) = -1;
     cv::Mat1d from_open_cv = to_open_cv.inv();
 
-    CvMat c_rvec = rvec;
-    cv::Mat1d rot(3,3); CvMat c_rot = rot;
-    cvRodrigues2(&c_rvec, &c_rot);
+    cv::Mat c_rvec = rvec;
+    cv::Mat1d rot(3,3); cv::Mat c_rot = rot;
+    cv::Rodrigues(c_rvec, c_rot);
 
     cv::Mat1d H = cv::Mat1d(4,4);
     setIdentity(H);
@@ -780,8 +780,7 @@ const cv::Vec3f Pose3D :: cvRodriguesRotation() const
     Eigen::AngleAxisd r;
     r.fromRotationMatrix(impl->camera_transform.rotation().matrix());
     cv::Vec3f rodrigues (r.axis()(0), r.axis()(1), r.axis()(2));
-    // FIXME: *= is broken on OpenCV 2.2
-    rodrigues = rodrigues*(float)r.angle();
+    rodrigues *= (float)r.angle();
     return rodrigues;
 }
 

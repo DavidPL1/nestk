@@ -30,9 +30,11 @@
 #include <opencv2/flann/flann.hpp>
 
 #include <cassert>
-#include <opencv2/nonfree/nonfree.hpp>
+#include "opencv2/xfeatures2d.hpp"
+#include <opencv2/xfeatures2d/nonfree.hpp>
 
 using namespace cv;
+using namespace cv::xfeatures2d;
 
 namespace ntk
 {
@@ -80,25 +82,25 @@ void FeatureSet :: extractFromImage(const RGBDImage& image,
         return extractFromImageUsingSiftPP(image, params);
     }
 
-    cv::FeatureDetector* detector = 0;
+    cv::Ptr<Feature2D> detector = 0;
     if (params.detector_type == "FAST")
     {
-        cv::FeatureDetector* fast_detector
-                = new FastFeatureDetector(params.threshold > 0 ? params.threshold : 10,
-                                          true/*nonmax_suppression*/);
-        detector = new PyramidAdaptedFeatureDetector(fast_detector, 2);
+        detector = FastFeatureDetector::create(params.threshold > 0 ? params.threshold : 10,
+                                          true);
     }
     else if (params.detector_type == "SIFT" || params.detector_type == "GPUSIFT")
     {
-        detector = new SiftFeatureDetector();
+        detector = SIFT::create();
     }
     else if (params.detector_type == "SURF")
     {
-        detector = new cv::SurfFeatureDetector(params.threshold > 0 ? params.threshold : 400 /*hessian_threshold*/,
+        detector = SURF::create(params.threshold > 0 ? params.threshold : 400 /*hessian_threshold*/,
                                                3/*octaves*/, 4/*octave_layers*/);
     }
     else if (params.detector_type == "SURF_BIGSCALE")
     {
+        detector = SURF::create(params.threshold > 0 ? params.threshold : 400 /*hessian_threshold*/,
+                                               3/*octaves*/, 4/*octave_layers*/);
     }
     else
     {
@@ -109,37 +111,37 @@ void FeatureSet :: extractFromImage(const RGBDImage& image,
     detector->detect(image.rgbAsGray(), keypoints);
     tc.elapsedMsecs(" -- keypoint extraction -- ");
 
-    cv::DescriptorExtractor* extractor = 0;
+    cv::Ptr<DescriptorExtractor> extractor = 0;
     if (params.descriptor_type == "BRIEF32")
     {
         m_feature_type = Feature_BRIEF32;
-        extractor = new cv::BriefDescriptorExtractor(32);
+        extractor = BriefDescriptorExtractor::create(32);
     }
     else if (params.descriptor_type == "BRIEF64")
     {
         m_feature_type = Feature_BRIEF64;
-        extractor = new cv::BriefDescriptorExtractor(64);
+        extractor = BriefDescriptorExtractor::create(64);
     }
     else if (params.descriptor_type == "SIFT")
     {
         m_feature_type = Feature_SIFT;
-        extractor = new cv::SiftDescriptorExtractor();
+        extractor = SIFT::create();
     }
     else if (params.descriptor_type == "SURF64")
     {
         m_feature_type = Feature_SURF64;
-        extractor = new cv::SurfDescriptorExtractor(400,
-                                                    4 /* octaves */,
-                                                    2 /* octave layers */,
-                                                    false /* extended */);
+        extractor = SURF::create(400,
+                                 4 /* octaves */,
+                                 2 /* octave layers */,
+                                 false /* extended */);
     }
     else if (params.descriptor_type == "SURF128")
     {
         m_feature_type = Feature_SURF128;
-        extractor = new cv::SurfDescriptorExtractor(400,
-                                                    4 /* octaves */,
-                                                    2 /* octave layers */,
-                                                    true /* extended */);
+        extractor = SURF::create(400,
+                                 4 /* octaves */,
+                                 2 /* octave layers */,
+                                 false /* extended */);
     }
     else
     {
@@ -390,7 +392,7 @@ void FeatureSet :: drawMatches(const cv::Mat3b& image,
                     image, keypoints1,
                     matches, display_image,
                     Scalar(255,0,0,255), Scalar(255,255,0,255),
-                    vector<char>());
+                    std::vector<char>());
 }
 
 void FeatureSet :: buildDescriptorIndex()

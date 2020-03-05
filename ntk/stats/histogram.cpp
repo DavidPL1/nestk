@@ -42,7 +42,7 @@ namespace ntk
 
     double dist = 0;
     for (int i = 0; i < n; i += histogram_cycle)
-    {
+    { 
       dist += emd_histogram(desc1+i, desc1+i+histogram_cycle, desc2+i);
     }
     return dist;
@@ -64,25 +64,25 @@ namespace ntk
     ntk_dbg_print(norm2, 1);
 #endif
 
-    CvMat* sig1 = cvCreateMat(n, 3, CV_32FC1);
-    CvMat* sig2 = cvCreateMat(n, 3, CV_32FC1);
+    cv::Mat sig1 = cv::Mat(n, 3, CV_32FC1);
+    cv::Mat sig2 = cv::Mat(n, 3, CV_32FC1);
 
     foreach_idx(i, h1)
     {
       int row = i/histogram_cycle;
       int col = i%histogram_cycle;
-      cvSet2D(sig1, i, 0, cvScalar(h1[i]));
-      cvSet2D(sig1, i, 1, cvScalar(row));
-      cvSet2D(sig1, i, 2, cvScalar(col));
+      sig1.at<float>(i, 0) = h1[i];
+      sig1.at<float>(i, 1) = row;
+      sig1.at<float>(i, 2) = col;
 
-      cvSet2D(sig2, i, 0, cvScalar(h2[i]));
-      cvSet2D(sig2, i, 1, cvScalar(row));
-      cvSet2D(sig2, i, 2, cvScalar(col));
+      sig2.at<float>(i, 0) = h2[i];
+      sig2.at<float>(i, 1) = row;
+      sig2.at<float>(i, 2) = col;
     }
 
-    double dist = cvCalcEMD2(sig1, sig2, CV_DIST_L2, 0, 0, 0, 0, 0);
-    cvReleaseMat(&sig1);
-    cvReleaseMat(&sig2);
+    double dist = cv::EMD(sig1, sig2, CV_DIST_L2);
+    sig1.release();
+    sig2.release();
     return dist;
   }
 

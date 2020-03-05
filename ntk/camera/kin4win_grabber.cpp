@@ -974,7 +974,7 @@ void Kin4WinGrabber :: estimateCalibration()
             std::vector<Mat> rvecs, tvecs;
             double reprojection_error = calibrateCamera(model_points, rgb_points, m_calib_data->rawRgbSize(),
                                                         m_calib_data->rgb_intrinsics, m_calib_data->rgb_distortion,
-                                                        rvecs, tvecs, CV_CALIB_USE_INTRINSIC_GUESS | CV_CALIB_FIX_PRINCIPAL_POINT | CV_CALIB_FIX_ASPECT_RATIO | CV_CALIB_ZERO_TANGENT_DIST);
+                                                        rvecs, tvecs, cv::CALIB_USE_INTRINSIC_GUESS | cv::CALIB_FIX_PRINCIPAL_POINT | cv::CALIB_FIX_ASPECT_RATIO | cv::CALIB_ZERO_TANGENT_DIST);
             ntk_dbg_print (reprojection_error, 1);
         }
         m_calib_data->rgb_distortion = 0.f;
@@ -997,7 +997,7 @@ void Kin4WinGrabber :: estimateCalibration()
                             m_calib_data->raw_depth_size,
                             m_calib_data->R, m_calib_data->T, E, F,
                             TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, 50, 1e-7),
-                            CALIB_FIX_INTRINSIC);
+                            cv::CALIB_FIX_INTRINSIC);
 
             double stereo_reprojection_error = computeCalibrationError(F, rgb_points, depth_points);
             ntk_dbg_print (stereo_reprojection_error, 1);

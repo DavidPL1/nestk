@@ -37,8 +37,8 @@ void OpencvGrabber :: connectToDevice(int camera_id)
   if (!m_logitech_capture.open(camera_id))
     ntk_throw_exception("Could not open logitech camera.");
 
-  m_logitech_capture.set(CV_CAP_PROP_FRAME_WIDTH, m_image_size.width);
-  m_logitech_capture.set(CV_CAP_PROP_FRAME_HEIGHT, m_image_size.height);
+  m_logitech_capture.set(cv::CAP_PROP_FRAME_WIDTH, m_image_size.width);
+  m_logitech_capture.set(cv::CAP_PROP_FRAME_HEIGHT, m_image_size.height);
 }
 
 void OpencvGrabber :: run()

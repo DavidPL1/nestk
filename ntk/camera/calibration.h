@@ -126,7 +126,7 @@ void calibrate_kinect_rgb(const std::vector<ntk::RGBDImage>& images,
                           ntk::PatternType pattern_type,
                           bool ignore_distortions,
                           bool fix_center,
-                          int default_flags = CV_CALIB_USE_INTRINSIC_GUESS | CV_CALIB_FIX_ASPECT_RATIO);
+                          int default_flags = cv::CALIB_USE_INTRINSIC_GUESS | cv::CALIB_FIX_ASPECT_RATIO);
 
 void calibrate_kinect_depth_infrared(const std::vector<RGBDImage>& images,
                                      const std::vector< std::vector<cv::Point2f> >& good_corners,
@@ -137,7 +137,7 @@ void calibrate_kinect_depth_infrared(const std::vector<RGBDImage>& images,
                                      ntk::PatternType pattern_type,
                                      bool ignore_distortions,
                                      bool fix_center,
-                                     int default_flags = CV_CALIB_USE_INTRINSIC_GUESS | CV_CALIB_FIX_ASPECT_RATIO);
+                                     int default_flags = cv::CALIB_USE_INTRINSIC_GUESS | cv::CALIB_FIX_ASPECT_RATIO);
 
 } // ntk
 

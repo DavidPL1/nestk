@@ -710,7 +710,7 @@ struct Openni2Grabber::Impl
                 std::vector<cv::Mat> rvecs, tvecs;
                 double reprojection_error = cv::calibrateCamera(model_points, rgb_points, ret->rawRgbSize(),
                                                                 ret->rgb_intrinsics, ret->rgb_distortion,
-                                                                rvecs, tvecs, CV_CALIB_USE_INTRINSIC_GUESS | CV_CALIB_FIX_PRINCIPAL_POINT /*| CV_CALIB_FIX_ASPECT_RATIO*/ | CV_CALIB_ZERO_TANGENT_DIST);
+                                                                rvecs, tvecs, cv::CALIB_USE_INTRINSIC_GUESS | cv::CALIB_FIX_PRINCIPAL_POINT /*| cv::CALIB_FIX_ASPECT_RATIO*/ | cv::CALIB_ZERO_TANGENT_DIST);
                 ntk_dbg_print (reprojection_error, 1);
 
                 ret->rgb_distortion = 0.f;
@@ -732,8 +732,8 @@ struct Openni2Grabber::Impl
                                         ret->depth_intrinsics, ret->depth_distortion,
                                         ret->raw_depth_size,
                                         ret->R, ret->T, E, F,
-                                        cv::TermCriteria(cv::TermCriteria::COUNT+cv::TermCriteria::EPS, 50, 1e-7),
-                                        cv::CALIB_FIX_INTRINSIC);
+                                        cv::CALIB_FIX_INTRINSIC,
+                                        cv::TermCriteria(cv::TermCriteria::COUNT+cv::TermCriteria::EPS, 50, 1e-7));
 
                     double stereo_reprojection_error = ntk::computeCalibrationError(F, rgb_points, depth_points);
                     ntk_dbg_print (stereo_reprojection_error, 1);

@@ -87,17 +87,17 @@ float BoardDetector::detect(const vector<Marker> &detectedMarkers,const  BoardCo
                 }
             }
 
-        CvMat cvCamMatrix=camMatrix;
-        CvMat cvDistCoeffs;
+        cv::Mat cvCamMatrix=camMatrix;
+        cv::Mat cvDistCoeffs;
         Mat zeros=Mat::zeros(4,1,CV_32FC1);
         if (distCoeff.rows>=4)  cvDistCoeffs=distCoeff;
         else  cvDistCoeffs=zeros;
-        CvMat cvImgPoints=imagePoints;
-        CvMat cvObjPoints=objPoints;
+        cv::Mat cvImgPoints=imagePoints;
+        cv::Mat cvObjPoints=objPoints;
 
-        CvMat cvRvec=Bdetected.Rvec;
-        CvMat cvTvec=Bdetected.Tvec;
-        cvFindExtrinsicCameraParams2(&cvObjPoints, &cvImgPoints, &cvCamMatrix, &cvDistCoeffs,&cvRvec,&cvTvec);
+        cv::Mat cvRvec=Bdetected.Rvec;
+        cv::Mat cvTvec=Bdetected.Tvec;
+        cv::solvePnP(cvObjPoints, cvImgPoints, cvCamMatrix, cvDistCoeffs, cvRvec, cvTvec);
         //now, rotate 90 deg in X so that Y axis points up
         rotateXAxis(Bdetected.Rvec);
         //cout<<Bdetected.Rvec.at<float>(0,0)<<" "<<Bdetected.Rvec.at<float>(1,0)<<Bdetected.Rvec.at<float>(2,0)<<endl;

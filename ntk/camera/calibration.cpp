@@ -66,7 +66,7 @@ void calibrationCorners(const std::string& image_name,
                    scale_factor, scale_factor, cv::INTER_CUBIC);
     }
 
-    int flags = CV_CALIB_CB_NORMALIZE_IMAGE|CV_CALIB_CB_ADAPTIVE_THRESH;
+    int flags = cv::CALIB_CB_NORMALIZE_IMAGE|cv::CALIB_CB_ADAPTIVE_THRESH;
     bool ok = true;
     switch (pattern)
     {
@@ -78,7 +78,7 @@ void calibrationCorners(const std::string& image_name,
 
         if (!ok)
         {
-            flags = CV_CALIB_CB_NORMALIZE_IMAGE;
+            flags = cv::CALIB_CB_NORMALIZE_IMAGE;
             ok = findChessboardCorners(scaled_image,
                                        pattern_size,
                                        corners,
@@ -87,7 +87,7 @@ void calibrationCorners(const std::string& image_name,
 
         if (!ok)
         {
-            flags = CV_CALIB_CB_ADAPTIVE_THRESH;
+            flags = cv::CALIB_CB_ADAPTIVE_THRESH;
             ok = findChessboardCorners(scaled_image,
                                        pattern_size,
                                        corners,
@@ -114,7 +114,7 @@ void calibrationCorners(const std::string& image_name,
     }
     case PatternAsymCircles: {
 #ifdef HAVE_OPENCV_GREATER_THAN_2_2
-        ok = findCirclesGrid( scaled_image, pattern_size, corners, CALIB_CB_ASYMMETRIC_GRID);
+        ok = findCirclesGrid( scaled_image, pattern_size, corners, cv::CALIB_CB_ASYMMETRIC_GRID);
 #else
         ntk_throw_exception("Circles pattern is not supported with OpenCV < 2.3");
 #endif
@@ -128,7 +128,7 @@ void calibrationCorners(const std::string& image_name,
     if (ok && pattern == PatternChessboard)
     {
         cornerSubPix(gray_image, corners, Size(5,5), Size(-1,-1),
-                     cvTermCriteria( CV_TERMCRIT_EPS+CV_TERMCRIT_ITER, 30, 0.1 ));
+                     cv::TermCriteria( cv::TermCriteria::EPS+cv::TermCriteria::COUNT, 30, 0.1 ));
     }
 
     if (ok && (!image_name.empty() || debug_image))
@@ -258,25 +258,24 @@ void estimate_checkerboard_pose(const std::vector<Point3f>& model,
     to_open_cv(2,2) = -1;
     cv::Mat1f from_open_cv = to_open_cv.inv();
 
-    Mat3f model_mat(model.size(), 1); CvMat c_model_mat = model_mat;
+    Mat3f model_mat(model.size(), 1);
     for_all_rc(model_mat) model_mat(r, 0) = Vec3f(model[r].x, -model[r].y, -model[r].z);
 
     // First image, for model pose.
 
-    Mat2f point_mat(img_points.size(), 1); CvMat c_point_mat = point_mat;
+    Mat2f point_mat(img_points.size(), 1);
     for_all_rc(point_mat) point_mat(r, 0) = Vec2f(img_points[r].x, img_points[r].y);
 
-    Mat1f rvec (3,1); rvec = 0; CvMat c_rvec = rvec;
-    Mat1f tvec (3,1); tvec = 0; CvMat c_tvec = tvec;
+    Mat1f rvec (3,1); rvec = 0;
+    Mat1f tvec (3,1); tvec = 0;
 
-    CvMat c_calib_mat = calib_matrix;
-    cvFindExtrinsicCameraParams2(&c_model_mat,
-                                 &c_point_mat,
-                                 &c_calib_mat,
-                                 0, &c_rvec, &c_tvec);
+    cv::solvePnP(model_mat,
+                 point_mat,
+                 calib_matrix,
+                 0, rvec, tvec);
 
-    cv::Mat1f rot(3,3); CvMat c_rot = rot;
-    cvRodrigues2(&c_rvec, &c_rot);
+    cv::Mat1f rot(3,3);
+    Rodrigues(rvec, rot);
 
     H = cv::Mat1f(4,4);
     setIdentity(H);
@@ -510,7 +509,7 @@ void calibrateStereoFromCheckerboard(const std::vector< std::vector<Point2f> >& 
                     intrinsics, zero_dist, intrinsics, zero_dist,
                     image_size,
                     R, T, E, F,
-                    CALIB_FIX_INTRINSIC|CALIB_SAME_FOCAL_LENGTH,
+                    cv::CALIB_FIX_INTRINSIC|cv::CALIB_SAME_FOCAL_LENGTH,
                     TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, 50, 1e-6));
 
     // OpenCV coords has y down and z toward scene.
@@ -554,9 +553,9 @@ void calibrate_kinect_depth_infrared(const std::vector<RGBDImage>& images,
 
     int flags = default_flags;
     if (ignore_distortions)
-        flags |= CV_CALIB_ZERO_TANGENT_DIST;
+        flags |= cv::CALIB_ZERO_TANGENT_DIST;
     if (fix_center)
-        flags |= CV_CALIB_FIX_PRINCIPAL_POINT;
+        flags |= cv::CALIB_FIX_PRINCIPAL_POINT;
 
     std::vector<Mat> rvecs, tvecs;
     double reprojection_error = calibrateCamera(pattern_points, good_corners, calibration.infraredSize(),
@@ -588,9 +587,9 @@ void calibrate_kinect_rgb(const std::vector<RGBDImage>& images,
 
     int flags = default_flags;
     if (ignore_distortions)
-        flags |= CV_CALIB_ZERO_TANGENT_DIST;
+        flags |= cv::CALIB_ZERO_TANGENT_DIST;
     if (fix_center)
-        flags |= CV_CALIB_FIX_PRINCIPAL_POINT;
+        flags |= cv::CALIB_FIX_PRINCIPAL_POINT;
 
     std::vector<Mat> rvecs, tvecs;
     double reprojection_error = calibrateCamera(pattern_points, good_corners, calibration.rawRgbSize(),

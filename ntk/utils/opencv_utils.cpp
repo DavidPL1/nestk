@@ -472,53 +472,52 @@ cv::Point3f computeCentroid(const std::vector<cv::Point3f>& points)
 
   void read_from_yaml(cv::FileNode node, bool& b)
   {
-    ntk_throw_exception_if(node.empty(), "Could not read " + node.name() + " from yaml file.");
-    int i = cvReadInt(*node, -1);
+    ntk_throw_exception_if(node.empty() || !node.isInt(), "Could not read " + node.name() + " from yaml file.");
+    int i = int(node);
     ntk_assert(i >= 0 && i <= 1, "Invalid boolean value");
     b = i;
   }
 
   void write_to_yaml(cv::FileStorage& output_file, const std::string& name, bool b)
   {
-    cvWriteInt(*output_file, name.c_str(), b);
+    output_file.write(name.c_str(), b);
   }
 
   void read_from_yaml(cv::FileNode node, int& i)
   {
-    ntk_throw_exception_if(node.empty(), "Could not read " + node.name() + " from yaml file.");
-    i = cvReadInt(*node, -1);
+    ntk_throw_exception_if(node.empty() || !node.isInt(), "Could not read " + node.name() + " from yaml file.");
+    i = int(node);
   }
 
   void write_to_yaml(cv::FileStorage& output_file, const std::string& name, int i)
   {
-    cvWriteInt(*output_file, name.c_str(), i);
+    output_file.write(name.c_str(), i);
   }
 
   void read_from_yaml(cv::FileNode node, double& b)
   {
-    ntk_throw_exception_if(node.empty(), "Could not read " + node.name() + " from yaml file.");
-    b = cvReadReal(*node, 0);
+    ntk_throw_exception_if(node.empty() || !node.isReal(), "Could not read " + node.name() + " from yaml file.");
+    b = node.real();
   }
 
   void write_to_yaml(cv::FileStorage& output_file, const std::string& name, double b)
   {
-    cvWriteReal(*output_file, name.c_str(), b);
+    output_file.write(name.c_str(), b);
   }
 
   void write_to_yaml(FileStorage& output_file, const std::string& name, const cv::Rect& r)
   {
     cv::Mat1f m(1,4);
     m << r.x, r.y, r.width, r.height;
-    CvMat c_m = m;
-    output_file.writeObj(name, &c_m);
+    cv::Mat c_m = m;
+    output_file << name.c_str() << c_m;
   }
 
   void read_from_yaml(FileNode node, cv::Rect& r)
   {
-    CvMat* c_m;
-    c_m = (CvMat*)node.readObj();
-    ntk_throw_exception_if(!c_m, std::string("Could not read field ") + node.name() + " from yml file.");
-    cv::Mat1f m (c_m);
+    cv::Mat1f m;
+    m = node.mat();
+    ntk_throw_exception_if(m.empty(), std::string("Could not read field ") + node.name() + " from yml file.");
     ntk_assert(m.cols == 4, "Bad Rect.");
     r = cv::Rect(m(0,0), m(0,1), m(0,2), m(0,3));
   }
@@ -527,70 +526,67 @@ cv::Point3f computeCentroid(const std::vector<cv::Point3f>& points)
   {
     cv::Mat1f m(1,3);
     std::copy(&v[0], &v[0]+3, m.ptr<float>());
-    CvMat c_m = m;
-    output_file.writeObj(name, &c_m);
+    cv::Mat c_m = m;
+    output_file << name.c_str() << c_m;
   }
 
   void write_to_yaml(FileStorage& output_file, const std::string& name, const cv::Vec2f& v)
   {
     cv::Mat1f m(1,2);
     std::copy(&v[0], &v[0]+2, m.ptr<float>());
-    CvMat c_m = m;
-    output_file.writeObj(name, &c_m);
+    cv::Mat c_m = m;
+    output_file << name.c_str() << c_m;
   }
 
   void read_from_yaml(FileNode node, cv::Vec3f& v)
   {
-    CvMat* c_m;
-    c_m = (CvMat*)node.readObj();
-    ntk_throw_exception_if(!c_m, std::string("Could not read field ") + node.name() + " from yml file.");
-    cv::Mat1f m (c_m);
+    cv::Mat m;
+    m = node.mat();
+    ntk_throw_exception_if(m.empty(), std::string("Could not read field ") + node.name() + " from yml file.");
     ntk_assert(m.cols == 3, "Bad vector.");
     std::copy(m.ptr<float>(), m.ptr<float>()+3, &v[0]);
   }
 
   void read_from_yaml(FileNode node, cv::Vec2f& v)
   {
-    CvMat* c_m;
-    c_m = (CvMat*)node.readObj();
-    ntk_throw_exception_if(!c_m, std::string("Could not read field ") + node.name() + " from yml file.");
-    cv::Mat1f m (c_m);
+    cv::Mat m;
+    m = node.mat();
+    ntk_throw_exception_if(m.empty(), std::string("Could not read field ") + node.name() + " from yml file.");
     ntk_assert(m.cols == 2, "Bad vector.");
     std::copy(m.ptr<float>(), m.ptr<float>()+2, &v[0]);
   }
 
   void write_to_yaml(cv::FileStorage& output_file, const std::string& name, const cv::Mat& matrix)
   {
-    CvMat m = matrix;
-    output_file.writeObj(name, &m);
+    cv::Mat m = matrix;
+    output_file << name.c_str() << m;
   }
 
   void read_from_yaml(cv::FileNode node, cv::Mat& matrix)
   {
-    CvMat* m = (CvMat*)node.readObj();
-    ntk_throw_exception_if(!m, std::string("Could not read field ") + node.name() + " from yml file.");
+    cv::Mat m = node.mat();
+    ntk_throw_exception_if(m.empty(), std::string("Could not read field ") + node.name() + " from yml file.");
     matrix = m;
   }
 
   void writeMatrix(FileStorage& output_file, const std::string& name, const cv::Mat& matrix)
   {
-    CvMat m = matrix;
-    output_file.writeObj(name, &m);
+    cv::Mat m = matrix;
+    output_file << name.c_str() << m;
   }
 
   void readMatrix(FileStorage& input_file, const std::string& name, cv::Mat& matrix)
   {
     FileNode node = input_file[name];
-    CvMat* m;
-    m = (CvMat*)node.readObj();
-    ntk_throw_exception_if(!m, std::string("Could not read field ") + name + " from yml file.");
+    cv::Mat m;
+    m = node.mat();
+    ntk_throw_exception_if(m.empty(), std::string("Could not read field ") + name + " from yml file.");
     matrix = m;
   }
 
   void imwrite_yml(const std::string& filename, const cv::Mat& image)
   {
-    IplImage tmp = image;
-    cvSave(filename.c_str(), &tmp);
+    cv::imwrite(filename.c_str(), image);
   }
 
   cv::Mat1f imread_Mat1f_raw(const std::string& filename)
@@ -904,9 +900,9 @@ cv::Point3f computeCentroid(const std::vector<cv::Point3f>& points)
 
   cv::Mat imread_yml(const std::string& filename)
   {
-    IplImage* tmp = (IplImage*) cvLoad(filename.c_str());
-    ntk_throw_exception_if(!tmp, "Could not load " + filename);
-    return cv::Mat(tmp);
+    cv::Mat tmp = cv::imread(filename.c_str());
+    ntk_throw_exception_if(tmp.empty(), "Could not load " + filename);
+    return tmp;
   }
 
   cv::Mat3b toMat3b(const cv::Mat1b& image)
@@ -977,7 +973,7 @@ cv::Point3f computeCentroid(const std::vector<cv::Point3f>& points)
   {
       QFileInfo f (filename.c_str());
       ntk_throw_exception_if(!f.exists(), "Could not find bounding box file.");
-      cv::FileStorage cv_file (filename, CV_STORAGE_READ);
+      cv::FileStorage cv_file (filename, cv::FileStorage::READ);
       cv::Mat1f mat (2,3);
       readMatrix(cv_file, "bounding_box", mat);
       return ntk::Rect3f(mat(0,0), mat(0,1), mat(0,2),
@@ -986,7 +982,7 @@ cv::Point3f computeCentroid(const std::vector<cv::Point3f>& points)
 
   void writeBoundingBoxToYamlFile(const std::string& filename, const ntk::Rect3f& bbox)
   {
-      FileStorage output_file (filename, CV_STORAGE_WRITE);
+      FileStorage output_file (filename, cv::FileStorage::WRITE);
       cv::Mat1f mat(2,3);
       mat(0,0) = bbox.x;
       mat(0,1) = bbox.y;
