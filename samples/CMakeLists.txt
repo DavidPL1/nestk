@@ -24,6 +24,9 @@ IF (NESTK_USE_OPENNI)
    ADD_EXECUTABLE(grab-mesh grab_mesh.cpp)
    TARGET_LINK_LIBRARIES(grab-mesh nestk)
 
+   ADD_EXECUTABLE(openni2-backend openni2_backend.cpp)
+   TARGET_LINK_LIBRARIES(openni2-backend nestk)
+
    ADD_EXECUTABLE(openni-backend openni_backend.cpp)
    TARGET_LINK_LIBRARIES(openni-backend nestk)
 

@@ -3,7 +3,7 @@
 #include <ntk/mesh/mesh_generator.h>
 #include <ntk/mesh/table_object_rgbd_modeler.h>
 #include <ntk/utils/debug.h>
-#include <ntk/camera/openni_grabber.h>
+#include <ntk/camera/openni2_grabber.h>
 
 #include <QApplication>
 #include <QDir>
@@ -35,16 +35,17 @@ int main(int argc, char **argv)
     QDir::setCurrent(QApplication::applicationDirPath());
 
     // Declare the global OpenNI driver. Only one can be instantiated in a program.
-    OpenniDriver ni_driver;
+    Openni2Driver ni_driver;
 
     // Declare the frame grabber.
-    OpenniGrabber grabber(ni_driver, opt::kinect_id());
+    Openni2Grabber grabber(ni_driver);
 
     // High resolution 1280x1024 RGB Image.
     if (opt::high_resolution())
         grabber.setHighRgbResolution(true);
 
     // Start the grabber.
+
     grabber.connectToDevice();
     grabber.start();
 

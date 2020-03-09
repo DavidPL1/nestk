@@ -74,10 +74,10 @@ int main(int argc, char **argv)
     object_finder->initialize(params);
 
     // Declare the global OpenNI driver. Only one can be instantiated in a program.
-    OpenniDriver ni_driver;
+    Openni2Driver ni_driver;
 
     // Declare the frame grabber.
-    OpenniGrabber grabber(ni_driver, opt::kinect_id());
+    Openni2Grabber grabber(ni_driver, opt::kinect_id());
 
     // High resolution 1280x1024 RGB Image.
     if (opt::high_resolution())
